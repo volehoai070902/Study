@@ -17,7 +17,38 @@ class Client():
         
 
     def HandleMsg(msg):
-        print("Hello")
+        read_byte = int(msg[0]);
+        information =[];
+        index = 0;
+        n = 0;
+        while read_byte != None:
+            str_ = []
+            for i in range (0, read_byte):
+                str_.append (msg[index + i + 1]);
+                n = n + 1;
+            
+            information.append(str_);
+            if n + 1== len(msg):
+                break;
+            index = n + 1;
+            
+            read_byte = msg[index];
+            n = n + 1;
+
+
+        hex_string = str(information[2]).split();
+
+        COMMAND = information[0][0];
+        BANK_CODE="";
+        PIN = "";
+
+        for i in information[1]:
+            BANK_CODE = BANK_CODE + chr(i);
+
+        for i in information[2]:
+            PIN = PIN + hex(i)[2:];
+
+
         
     def run(self):
         try:
@@ -25,6 +56,7 @@ class Client():
                 data = self.server.recv(1024);
                 str_data :str= data.decode("utf8")
                 str_data = str_data.strip();
+
                 #2553SCB16 ->  0255-03SCB-08A501F7663A693F76
                 
         finally:

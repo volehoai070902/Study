@@ -5,11 +5,10 @@ read_byte = int(b[0]);
 information =[];
 index = 0;
 n = 0;
-print (len(b))
 while read_byte != None:
-    str_ = ""
+    str_ = []
     for i in range (0, read_byte):
-        str_ = str_ + str(b[index + i + 1]) + " ";
+        str_.append (b[index + i + 1]);
         n = n + 1;
     
     information.append(str_);
@@ -20,13 +19,16 @@ while read_byte != None:
     read_byte = b[index];
     n = n + 1;
 
+
 hex_string = str(information[2]).split();
 
-PIN = "";
+COMMAND = information[0][0];
 BANK_CODE="";
-for i in range (0, len(str(information[2]).split())):
-    index = int (hex_string[i]);
-    str_ = hex(index)[2:];
-    PIN = PIN + str_;
+PIN = "";
 
-abc = str(information[1]).split();
+for i in information[1]:
+    BANK_CODE = BANK_CODE + chr(i);
+
+for i in information[2]:
+    PIN = PIN + hex(i)[2:];
+
