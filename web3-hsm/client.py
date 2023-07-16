@@ -1,9 +1,9 @@
 import socket
 from threading import Thread
 from helper.hsm_func import HSM
+from config.connectDatabase import ConnectDatabase;
 HOST = "117.4.241.150"
 PORT = 7500
-
 
 class Client():
     s = None;
@@ -14,9 +14,10 @@ class Client():
         self.s.connect((HOST,PORT));
         self.server = server;
         self.HSM = HSM(self.s);
-        
+        self.Conn = ConnectDatabase().getConnect();
 
-    def HandleMsg(msg):
+    def HandleMsg(self, message:str):
+        msg = bytes.fromhex(message);
         read_byte = int(msg[0]);
         information =[];
         index = 0;
@@ -48,6 +49,8 @@ class Client():
         for i in information[2]:
             PIN = PIN + hex(i)[2:];
 
+        return COMMAND, BANK_CODE, PIN;
+
 
         
     def run(self):
@@ -57,7 +60,21 @@ class Client():
                 str_data :str= data.decode("utf8")
                 str_data = str_data.strip();
 
-                #2553SCB16 ->  0255-03SCB-08A501F7663A693F76
+                #01370356434208A501F7663A693F76 -> 55 scb  A501F7663A693F76
+                command, bank_code, pin = self.HandleMsg(message=str_data);
+                print (command, bank_code, pin );
+                match str(command):
+                    case "10":
+                        print ("hello")
+                        print (self.HSM.GenerateKey("<10#1##D#>"));
+                    case "55":
+                        cur = self.Conn.cursor();
+                        query = "SELECT index FROM public.\"BANK_CODE\" where code = '{}';".format(bank_code);
+                        cur.execute(query=query);
+                        row = cur.fetchone();
+                        indexofkeybank = row[0];
+                        print(self.HSM.TranslatePin("<55#T0##T{}##00#{}#1111#####>".format(indexofkeybank,pin)));
+
                 
         finally:
             self.s.close();

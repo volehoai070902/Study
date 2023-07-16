@@ -1,4 +1,4 @@
-a = "01370373636208A501F7663A693F76".lower();
+a = "013709434f2d4f5042414e4b08A501F7663A693F76".lower();
 b = bytes.fromhex(a);
 
 read_byte = int(b[0]);
@@ -31,4 +31,4 @@ for i in information[1]:
 
 for i in information[2]:
     PIN = PIN + hex(i)[2:];
-
+print(COMMAND, BANK_CODE, PIN);

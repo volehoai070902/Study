@@ -6,6 +6,7 @@ class HSM:
     HSM_Conn = None
     def __init__(self, hsm_conn:socket.socket=None):
         self.HSM_Conn = hsm_conn;
+    
     def HandleMsg(self, data:str):
         self.HSM_Conn.sendall(bytes(data.encode()));
         response = self.HSM_Conn.recv(1024);
@@ -27,7 +28,9 @@ class HSM:
 
     def TranslatePin(self, data:str):
         data_ = self.HandleMsg(data= data);
+        print(data_);
         try:
+
             response = self.SplitResponse(data_);
             return response[2];
         except Exception as e:
