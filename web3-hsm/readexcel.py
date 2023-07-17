@@ -11,17 +11,17 @@ conn =  database.getConnect();
 print (conn)
 cur = conn.cursor();
 
-# for i in range (0, len(bankcode)):
-#     id = str(uuid.uuid4());
-#     code = bankcode[i];
-#     name = nameofbank[i];
-#     query = "insert into public.\"BANK_CODE\"(id, code, index, name) values (%s,%s,%s,%s)";
-#     cur.execute(query=query, vars=(id,code,i,name));
-#     database.getConnect().commit()
+for i in range (0, len(bankcode)):
+    id = str(uuid.uuid4());
+    code = bankcode[i];
+    name = nameofbank[i];
+    query = "insert into public.\"BANK_CODE\"(id, code, index, name) values (%s,%s,%s,%s)";
+    cur.execute(query=query, vars=(id,code,i,name));
+    database.getConnect().commit()
 
-cur.execute("SELECT index FROM public.\"BANK_CODE\" where code = 'VCB';");
-rows = cur.fetchone()
-print (rows[0]);
-conn.commit()
+# cur.execute("SELECT index FROM public.\"BANK_CODE\" where code = 'VCB';");
+# rows = cur.fetchone()
+# print (rows[0]);
+# conn.commit()
 cur.close() ;
 conn.close();

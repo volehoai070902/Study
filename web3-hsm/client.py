@@ -2,13 +2,10 @@ import socket
 from threading import Thread
 from helper.hsm_func import HSM
 from config.connectDatabase import ConnectDatabase;
-HOST = "117.4.241.150"
-PORT = 7500
+HOST = "12.1.78.164"
+PORT = 17000
 
-class Client():
-    s = None;
-    server = None;
-    HSM = None;
+class Client:
     def __init__(self,server:socket.socket=None):
         self.s = socket.socket(socket.AF_INET,socket.SOCK_STREAM);
         self.s.connect((HOST,PORT));
@@ -52,7 +49,8 @@ class Client():
         return COMMAND, BANK_CODE, PIN;
 
 
-        
+    
+
     def run(self):
         try:
             while True:
@@ -60,21 +58,22 @@ class Client():
                 str_data :str= data.decode("utf8")
                 str_data = str_data.strip();
 
-                #01370356434208A501F7663A693F76 -> 55 scb  A501F7663A693F76
+                #01370356434208A501F7663A693F76 -> 55 vcb  A501F7663A693F76
                 command, bank_code, pin = self.HandleMsg(message=str_data);
                 print (command, bank_code, pin );
                 match str(command):
                     case "10":
-                        print ("hello")
-                        print (self.HSM.GenerateKey("<10#1##D#>"));
+                        response = self.HSM.GenerateKey("<10#1##D#>");
+                        self.server.sendall(bytes(response.encode()));
                     case "55":
                         cur = self.Conn.cursor();
                         query = "SELECT index FROM public.\"BANK_CODE\" where code = '{}';".format(bank_code);
                         cur.execute(query=query);
                         row = cur.fetchone();
                         indexofkeybank = row[0];
-                        print(self.HSM.TranslatePin("<55#T0##T{}##00#{}#1111#####>".format(indexofkeybank,pin)));
-
+                       
+                        response = self.HSM.TranslatePin("<55#T0##T{}##00#{}#1111#####>".format(indexofkeybank,pin));
+                        self.server.sendall(bytes(response.encode()));
                 
         finally:
             self.s.close();

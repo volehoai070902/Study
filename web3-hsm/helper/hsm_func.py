@@ -3,7 +3,6 @@ import socket
 import errorHSM.error
 
 class HSM:
-    HSM_Conn = None
     def __init__(self, hsm_conn:socket.socket=None):
         self.HSM_Conn = hsm_conn;
     
@@ -26,13 +25,36 @@ class HSM:
         except Exception as e:
             return str(e);
 
+    def AddKeyToHSM(self, data:str):
+        data_ = self.HandleMsg(data=data);
+        try:
+            response = self.SplitResponse(data_);
+            return response[1];
+        except Exception as e:
+            return str(e);
+
+    def EncryptData(self, data:str):
+        data_ = self.HandleMsg(data=data);
+        try:
+            response = self.SplitResponse(data_);
+            return response[8];
+        except Exception as e:
+            return str(e);
+
+    def DecryptData(self, data:str):
+        data_ = self.HandleMsg(data=data);
+        try:
+            response = self.SplitResponse(data_);
+            return response[8];
+        except Exception as e:
+            return str(e);
+
     def TranslatePin(self, data:str):
         data_ = self.HandleMsg(data= data);
         print(data_);
         try:
-
             response = self.SplitResponse(data_);
-            return response[2];
+            return response[2] ;
         except Exception as e:
             return str(e);
 
